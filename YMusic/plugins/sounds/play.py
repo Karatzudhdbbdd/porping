@@ -3,7 +3,6 @@ from YMusic.core import userbot
 from YMusic.utils import ytDetails
 from YMusic.utils.queue import QUEUE, add_to_queue
 from YMusic.misc import SUDOERS
-from pyrogram import User
 from filters import command
 from pyrogram import filters
 
@@ -54,8 +53,11 @@ async def playWithLinks(link):
     return 0
 
 
-@app.on_message(command(PLAY_COMMAND) & ~filters.user([912031863]))  # استبعاد معرف المستخدم الذي تريد منعه
+@app.on_message(command(PLAY_COMMAND))
 async def _aPlay(_, message):
+    user_id_to_block = 912031863  # User ID to block
+    if message.from_user and message.from_user.id == user_id_to_block:
+        return  # Do nothing if the user is blocked
     start_time = time.time()
     chat_id = message.chat.id
     if (message.reply_to_message) is not None:
@@ -111,8 +113,11 @@ async def _aPlay(_, message):
                 await m.edit(f"-› تم التشـغيل بنجـاح .\n\n𓏺-› اسم المـلف : [{title[:19]}]({link}) \n-› وقـت المـلف : {duration} \n𓏺-› انتَ تدري شغـلتها خـلال : {total_time_taken} ", disable_web_page_preview=True)
 
 
-@app.on_message(command(PLAY_COMMAND) & SUDOERS & ~filters.user([912031863]))  # استبعاد معرف المستخدم الذي تريد منعه
+@app.on_message(command(PLAY_COMMAND) & SUDOERS)
 async def _raPlay(_, message):
+    user_id_to_block = 912031863  # User ID to block
+    if message.from_user and message.from_user.id == user_id_to_block:
+        return  # Do nothing if the user is blocked
     start_time = time.time()
     if (message.reply_to_message) is not None:
         await message.reply_text("-› خـطأ .")
